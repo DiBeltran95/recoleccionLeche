@@ -19,22 +19,6 @@ Aplicación web para registrar la recolección de leche en fincas con soporte of
 - Notificaciones de estado
 - Modo offline y sincronización diferida
 
-## Desarrollo local
-1. Instalar dependencias
-   ```bash
-   npm install
-   ```
-2. Ejecutar el frontend en modo desarrollo
-   ```bash
-   npm run dev
-   ```
-3. Ejecutar el servidor (en otra terminal)
-   ```bash
-   npm run server
-   ```
-
-Ajusta los comandos según los scripts definidos en `package.json`.
-
 ## Instalación
 Requisitos:
 - Node.js >= 18
