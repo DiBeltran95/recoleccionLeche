@@ -48,6 +48,7 @@ Pasos:
    ```
 2) Instalar dependencias
    ```bash
+   npm ci
    npm install
    ```
 3) Configurar variables de entorno (ver sección siguiente)
