@@ -67,6 +67,50 @@ DB_NAME=recoleccion_leche
 - [ ] Tests (unitarios e integración)
 - [ ] Despliegue y CI/CD
 
+##Mysql
+   ```bash
+   CREATE TABLE recolector (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nombres VARCHAR(100) NOT NULL,
+      apellidos VARCHAR(100) NOT NULL,
+      tipo_documento ENUM('CC', 'CE', 'NIT', 'Otro') NOT NULL,
+      documento VARCHAR(20) NOT NULL UNIQUE,
+      celular VARCHAR(20),
+      direccion VARCHAR(255),
+      placaVehiculo VARCHAR(20),
+      datos_bancarios TEXT
+   );
+   CREATE TABLE usuario (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      usuario VARCHAR(50) NOT NULL UNIQUE,
+      contrasena VARCHAR(255) NOT NULL,
+      rol ENUM('propietario', 'lechero') NOT NULL,
+      fkRecolector INT NULL,
+      fkFinca INT NULL,
+      estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo',
+      FOREIGN KEY (fkRecolector) REFERENCES recolector(id)
+      FOREIGN KEY (fkFinca) REFERENCES finca(id)
+   );
+   CREATE TABLE finca (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      nombreFinca VARCHAR(255),
+      nombrePropietario VARCHAR(255) NOT NULL,
+      observavion VARCHAR(255),
+      ubicacion VARCHAR(255),
+      vereda VARCHAR(255)
+   );
+   CREATE TABLE registro_leche (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      fkFinca INT NOT NULL,
+      cantidad DECIMAL(10, 2) NOT NULL,
+      fechaHora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      observaciones TEXT,
+      fkUsuarioRegistra INT NOT NULL,
+      FOREIGN KEY (fkFinca) REFERENCES finca(id),
+      FOREIGN KEY (fkUsuarioRegistra) REFERENCES usuario(id)
+   );
+   ```
+
 ## Deploy
 Se versiona en GitHub: https://github.com/DiBeltran95/recoleccionLeche
 
