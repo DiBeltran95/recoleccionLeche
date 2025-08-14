@@ -75,19 +75,27 @@ DB_NAME=recoleccion_leche
        apellidos VARCHAR(100) NOT NULL,
        tipo_documento ENUM('CC', 'CE', 'NIT', 'Otro') NOT NULL,
        documento VARCHAR(20) NOT NULL UNIQUE,
+       fechaNacimiento DATE,
        celular VARCHAR(20),
        direccion VARCHAR(255),
        placaVehiculo VARCHAR(20),
-       datos_bancarios TEXT
+       datos_bancarios TEXT,
+       estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo'
    );
    
    CREATE TABLE finca (
        id INT AUTO_INCREMENT PRIMARY KEY,
        nombreFinca VARCHAR(255),
-       nombrePropietario VARCHAR(255) NOT NULL,
-       observacion VARCHAR(255), -- Corregido de 'observavion'
+       nombres VARCHAR(100) NOT NULL,
+       apellidos VARCHAR(100) NOT NULL,
+       tipo_documento ENUM('CC', 'CE', 'NIT', 'Otro') NOT NULL,
+       documento VARCHAR(20) NOT NULL UNIQUE,
+       fechaNacimiento DATE,
+       celular VARCHAR(20),
        ubicacion VARCHAR(255),
-       vereda VARCHAR(255)
+       vereda VARCHAR(255),
+       observacion VARCHAR(255),
+       estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo'
    );
    
    CREATE TABLE usuario (
