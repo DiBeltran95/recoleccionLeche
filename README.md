@@ -319,5 +319,56 @@ Si ocurre un error durante la transacción en la base de datos.
 }
 ```
 
+4. Listar Registros de Leche por Finca
+
+URL: `/api/registros?fkFinca={id}`
+
+Método: `GET`
+
+Descripción: Obtiene los registros de recolección de leche asociados a una finca específica. Requiere el parámetro de consulta `fkFinca`.
+
+Parámetros de consulta (Query Params):
+
+- `fkFinca` (requerido, entero): ID de la finca de la cual se desean listar los registros.
+
+Cuerpo de la Petición (Request Body): Ninguno.
+
+Respuesta Exitosa (Código 200 OK):
+
+Devuelve un array de objetos JSON, donde cada objeto representa un registro. Incluye el nombre del usuario que registró el dato.
+
+```json
+[
+  {
+    "id": 12,
+    "fkFinca": 5,
+    "cantidad": 150.5,
+    "fechaHora": "2024-05-21T10:30:00Z",
+    "observaciones": "Leche de primer ordeño",
+    "fkUsuarioRegistra": 3,
+    "nombreUsuarioRegistra": "operario01"
+  },
+  {
+    "id": 11,
+    "fkFinca": 5,
+    "cantidad": 98.0,
+    "fechaHora": "2024-05-20T09:10:00Z",
+    "observaciones": "",
+    "fkUsuarioRegistra": 3,
+    "nombreUsuarioRegistra": "operario01"
+  }
+]
+```
+
+Respuestas de Error:
+
+Código 400 Bad Request: Si no se envía `fkFinca` o no es válido.
+
+```json
+{
+  "error": "Se requiere el ID de la finca (fkFinca)"
+}
+```
+
 ## Licencia
 Este proyecto está bajo la licencia MIT. Ver `LICENSE`.
