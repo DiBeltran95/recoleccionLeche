@@ -143,6 +143,177 @@ DB_NAME=recoleccion_leche
 
 ## Deploy
 Se versiona en GitHub: https://github.com/DiBeltran95/recoleccionLeche
+ 
+## API para Aplicación Lechera
+Este documento describe los endpoints disponibles en la API del backend para la aplicación de gestión lechera.
+
+### URL Base
+Todas las peticiones a la API deben realizarse a la siguiente URL base:
+
+https://dibeltran03.alwaysdata.net/
+
+### Endpoints de la API
+A continuación se detallan los endpoints disponibles, los métodos HTTP que aceptan y los datos necesarios para cada petición.
+
+1. Autenticación de Usuarios
+
+URL: `/api/auth/login`
+
+Método: `POST`
+
+Descripción: Valida las credenciales de un usuario contra la base de datos. Si son correctas, devuelve los datos del usuario.
+
+Cuerpo de la Petición (Request Body):
+
+Se debe enviar un objeto JSON con el usuario y la contrasena.
+
+```json
+{
+    "usuario": "nombre_de_usuario",
+    "contrasena": "su_contraseña"
+}
+```
+
+Respuesta Exitosa (Código 200 OK):
+
+Devuelve un objeto JSON con los datos del usuario autenticado. fkFinca y fkRecolector pueden ser null.
+
+```json
+{
+    "id": 1,
+    "usuario": "nombre_de_usuario",
+    "rol": "lechero",
+    "fkFinca": null,
+    "fkRecolector": 5
+}
+```
+
+Respuestas de Error:
+
+Código 400 Bad Request: Si no se envían el usuario o la contrasena.
+
+```json
+{
+    "error": "Usuario y contraseña requeridos"
+}
+```
+
+Código 401 Unauthorized: Si las credenciales son incorrectas o el usuario está inactivo.
+
+```json
+{
+    "error": "Credenciales inválidas"
+}
+```
+
+2. Obtener Listado de Fincas
+
+URL: `/api/fincas`
+
+Método: `GET`
+
+Descripción: Proporciona un listado completo de las fincas que tienen el estado "activo".
+
+Cuerpo de la Petición (Request Body): Ninguno.
+
+Respuesta Exitosa (Código 200 OK):
+
+Devuelve un array de objetos JSON, donde cada objeto representa una finca.
+
+```json
+[
+    {
+        "id": 1,
+        "nombreFinca": "La Esperanza",
+        "nombres": "Juan",
+        "apellidos": "Perez",
+        "tipo_documento": "CC",
+        "documento": "12345678",
+        "fechaNacimiento": "1980-05-15",
+        "celular": "3001234567",
+        "ubicacion": "Vereda El Carmen",
+        "vereda": "El Carmen",
+        "observacion": "Finca lechera tradicional."
+    },
+    {
+        "id": 2,
+        "nombreFinca": "El Porvenir",
+        "nombres": "Ana",
+        "apellidos": "Gomez",
+        "tipo_documento": "CC",
+        "documento": "87654321",
+        "fechaNacimiento": "1992-11-20",
+        "celular": "3109876543",
+        "ubicacion": "Km 5 vía a Neiva",
+        "vereda": "Las Palmas",
+        "observacion": ""
+    }
+]
+```
+
+3. Sincronizar Registros de Leche
+
+URL: `/api/registros/sync`
+
+Método: `POST`
+
+Descripción: Recibe un array de registros de leche y los inserta en la base de datos. Está diseñado para funcionar de forma masiva y offline.
+
+Cuerpo de la Petición (Request Body):
+
+Se debe enviar un objeto JSON que contenga una clave `registros`, cuyo valor es un array de objetos. Cada objeto representa un registro de leche.
+
+Campos por registro:
+
+- `id` (Opcional, Entero): ID local del registro en el dispositivo. Si se envía, la API lo devolverá para confirmar la sincronización.
+- `fkFinca` (Requerido, Entero): ID de la finca donde se hizo la recolección.
+- `cantidad` (Requerido, Numérico): Cantidad de leche recolectada (ej. 150.5).
+- `fechaHora` (Requerido, String): Fecha y hora de la recolección en formato ISO 8601 (ej. "2024-05-21T10:30:00Z").
+- `observaciones` (Opcional, String): Cualquier nota adicional sobre el registro.
+- `fkUsuarioRegistra` (Requerido, Entero): ID del usuario que realizó el registro.
+
+```json
+{
+    "registros": [
+        {
+            "id": 101,
+            "fkFinca": 1,
+            "cantidad": 50.5,
+            "fechaHora": "2024-05-21T08:00:00Z",
+            "observaciones": "Leche de primer ordeño",
+            "fkUsuarioRegistra": 3
+        },
+        {
+            "id": 102,
+            "fkFinca": 2,
+            "cantidad": 120,
+            "fechaHora": "2024-05-21T09:15:00Z",
+            "fkUsuarioRegistra": 3
+        }
+    ]
+}
+```
+
+Respuesta Exitosa (Código 200 OK):
+
+Devuelve un objeto JSON con un array `syncedIds`, que contiene los IDs locales de los registros que se sincronizaron correctamente.
+
+```json
+{
+    "syncedIds": [101, 102]
+}
+```
+
+Respuesta de Error (Código 500 Internal Server Error):
+
+Si ocurre un error durante la transacción en la base de datos.
+
+```json
+{
+    "error": "Error al sincronizar",
+    "detail": "Mensaje específico del error de la base de datos."
+}
+```
 
 ## Licencia
 Este proyecto está bajo la licencia MIT. Ver `LICENSE`.
