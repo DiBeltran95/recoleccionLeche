@@ -208,11 +208,15 @@ Código 401 Unauthorized: Si las credenciales son incorrectas o el usuario está
 
 2. Obtener Listado de Fincas
 
-URL: `/api/fincas`
+URL: `/api/fincas?usuarioId={id}`
 
 Método: `GET`
 
-Descripción: Proporciona un listado completo de las fincas que tienen el estado "activo".
+Descripción: Devuelve las fincas activas asociadas al contexto del usuario. Requiere el parámetro de consulta `usuarioId`.
+
+Parámetros de consulta (Query Params):
+
+- `usuarioId` (requerido, entero): ID del usuario solicitante.
 
 Cuerpo de la Petición (Request Body): Ninguno.
 
