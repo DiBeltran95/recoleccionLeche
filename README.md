@@ -70,44 +70,66 @@ DB_NAME=recoleccion_leche
 ##Mysql
    ```bash
    CREATE TABLE recolector (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      nombres VARCHAR(100) NOT NULL,
-      apellidos VARCHAR(100) NOT NULL,
-      tipo_documento ENUM('CC', 'CE', 'NIT', 'Otro') NOT NULL,
-      documento VARCHAR(20) NOT NULL UNIQUE,
-      celular VARCHAR(20),
-      direccion VARCHAR(255),
-      placaVehiculo VARCHAR(20),
-      datos_bancarios TEXT
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       nombres VARCHAR(100) NOT NULL,
+       apellidos VARCHAR(100) NOT NULL,
+       tipo_documento ENUM('CC', 'CE', 'NIT', 'Otro') NOT NULL,
+       documento VARCHAR(20) NOT NULL UNIQUE,
+       celular VARCHAR(20),
+       direccion VARCHAR(255),
+       placaVehiculo VARCHAR(20),
+       datos_bancarios TEXT
    );
-   CREATE TABLE usuario (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      usuario VARCHAR(50) NOT NULL UNIQUE,
-      contrasena VARCHAR(255) NOT NULL,
-      rol ENUM('propietario', 'lechero') NOT NULL,
-      fkRecolector INT NULL,
-      fkFinca INT NULL,
-      estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo',
-      FOREIGN KEY (fkRecolector) REFERENCES recolector(id)
-      FOREIGN KEY (fkFinca) REFERENCES finca(id)
-   );
+   
    CREATE TABLE finca (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      nombreFinca VARCHAR(255),
-      nombrePropietario VARCHAR(255) NOT NULL,
-      observavion VARCHAR(255),
-      ubicacion VARCHAR(255),
-      vereda VARCHAR(255)
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       nombreFinca VARCHAR(255),
+       nombrePropietario VARCHAR(255) NOT NULL,
+       observacion VARCHAR(255), -- Corregido de 'observavion'
+       ubicacion VARCHAR(255),
+       vereda VARCHAR(255)
    );
+   
+   CREATE TABLE usuario (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       usuario VARCHAR(50) NOT NULL UNIQUE,
+       contrasena VARCHAR(255) NOT NULL,
+       rol ENUM('propietario', 'lechero') NOT NULL,
+       fkRecolector INT NULL,
+       fkFinca INT NULL,
+       estado ENUM('activo', 'inactivo') NOT NULL DEFAULT 'activo',
+       CONSTRAINT fk_usuario_recolector FOREIGN KEY (fkRecolector) REFERENCES recolector(id) ON DELETE SET NULL,
+       CONSTRAINT fk_usuario_finca FOREIGN KEY (fkFinca) REFERENCES finca(id) ON DELETE SET NULL
+   );
+   
    CREATE TABLE registro_leche (
-      id INT AUTO_INCREMENT PRIMARY KEY,
-      fkFinca INT NOT NULL,
-      cantidad DECIMAL(10, 2) NOT NULL,
-      fechaHora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-      observaciones TEXT,
-      fkUsuarioRegistra INT NOT NULL,
-      FOREIGN KEY (fkFinca) REFERENCES finca(id),
-      FOREIGN KEY (fkUsuarioRegistra) REFERENCES usuario(id)
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       fkFinca INT NOT NULL,
+       cantidad DECIMAL(10, 2) NOT NULL,
+       fechaHora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+       observaciones TEXT,
+       fkUsuarioRegistra INT NOT NULL,
+       CONSTRAINT fk_registro_finca FOREIGN KEY (fkFinca) REFERENCES finca(id),
+       CONSTRAINT fk_registro_usuario FOREIGN KEY (fkUsuarioRegistra) REFERENCES usuario(id)
+   );
+
+   CREATE TABLE ruta (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       nombre VARCHAR(255) NOT NULL,
+       descripcion TEXT,
+       fkRecolector INT NULL,
+       estado ENUM('activa', 'inactiva') NOT NULL DEFAULT 'activa',
+       CONSTRAINT fk_ruta_recolector FOREIGN KEY (fkRecolector) REFERENCES recolector(id) ON DELETE SET NULL
+   );
+   
+   CREATE TABLE ruta_finca (
+       id INT AUTO_INCREMENT PRIMARY KEY,
+       fkRuta INT NOT NULL,
+       fkFinca INT NOT NULL,
+       orden_visita INT NOT NULL COMMENT 'Define la secuencia de visita (1, 2, 3, ...)',
+       CONSTRAINT fk_rutafinca_ruta FOREIGN KEY (fkRuta) REFERENCES ruta(id) ON DELETE CASCADE,
+       CONSTRAINT fk_rutafinca_finca FOREIGN KEY (fkFinca) REFERENCES finca(id) ON DELETE CASCADE,
+       UNIQUE (fkRuta, fkFinca)
    );
    ```
 
